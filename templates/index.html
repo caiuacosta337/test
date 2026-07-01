@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="panel panel-header">
+    <div>
+        <p class="eyebrow">Gerenciador de tarefas</p>
+        <h1>Meu Task Board</h1>
+        <p class="subtitle">Simples, rapido e visual para organizar seu dia.</p>
+    </div>
+    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Alternar tema">
+        <span class="theme-toggle__icon" id="themeIcon">🌙</span>
+        <span id="themeLabel">Dark</span>
+    </button>
+</section>
+
+<section class="panel">
+    <form class="task-form" action="{{ url_for('add_task') }}" method="post">
+        <div class="field-group">
+            <label for="title">Titulo</label>
+            <input id="title" name="title" type="text" maxlength="80" placeholder="Ex: Revisar relatorio" required>
+        </div>
+
+        <div class="field-group">
+            <label for="description">Descricao</label>
+            <textarea id="description" name="description" rows="3" maxlength="240" placeholder="Detalhes importantes"></textarea>
+        </div>
+
+        <div class="row">
+            <div class="field-group">
+                <label for="date">Data</label>
+                <input id="date" name="date" type="date">
+            </div>
+
+            <div class="field-group">
+                <label for="priority">Prioridade</label>
+                <select id="priority" name="priority">
+                    <option value="low">Baixa</option>
+                    <option value="medium" selected>Media</option>
+                    <option value="high">Alta</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-primary">Adicionar tarefa</button>
+    </form>
+</section>
+
+<section class="cards-wrap">
+    {% if tasks %}
+        {% for task in tasks %}
+        <article class="task-card priority-{{ task.priority }}">
+            <header>
+                <h3>{{ task.title }}</h3>
+                <span class="priority-badge">{{ priority_labels[task.priority] }}</span>
+            </header>
+
+            <p class="task-description">{{ task.description if task.description else 'Sem descricao' }}</p>
+
+            <footer>
+                <span class="task-date">
+                    {% if task.date %}
+                        {{ task.date }}
+                    {% else %}
+                        Sem data
+                    {% endif %}
+                </span>
+            </footer>
+        </article>
+        {% endfor %}
+    {% else %}
+        <article class="empty-state">
+            <h3>Nenhuma tarefa ainda</h3>
+            <p>Adicione sua primeira tarefa no formulario acima.</p>
+        </article>
+    {% endif %}
+</section>
+{% endblock %}
