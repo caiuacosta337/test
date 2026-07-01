@@ -1,27 +1,43 @@
+# Nome visivel do workflow na aba Actions do GitHub.
 name: PR Build
 
+# Define os gatilhos que iniciam o pipeline.
 on:
+  # Executa este workflow quando um Pull Request e aberto, atualizado ou reaberto.
   pull_request:
 
+# Lista de jobs (tarefas) que o workflow executa.
 jobs:
+  # Job principal de build/validacao da aplicacao.
   build:
+    # Runner hospedado pelo GitHub onde os passos serao executados.
     runs-on: ubuntu-latest
 
+    # Sequencia de passos executados dentro do job.
     steps:
+      # Baixa o codigo do repositorio para o runner.
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Instala e configura a versao do Python usada no pipeline.
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
+          # Versao do Python usada para build/validacao.
           python-version: "3.13"
 
+      # Instala as dependencias da aplicacao.
       - name: Install dependencies
         run: |
+          # Atualiza o pip para evitar problemas com instaladores antigos.
           python -m pip install --upgrade pip
+          # Instala os pacotes definidos no requirements.txt.
           pip install -r requirements.txt
 
+      # Executa validacoes de build da aplicacao Python/Flask.
       - name: Build and validate app
         run: |
+          # Compila o arquivo Python para validar sintaxe/bytecode.
           python -m compileall app.py
+          # Importa a app Flask e imprime o mapa de rotas para validar carregamento.
           python -c "from app import app; print(app.url_map)"
