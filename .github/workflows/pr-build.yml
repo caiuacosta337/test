@@ -12,12 +12,18 @@ jobs:
   build:
     # Runner hospedado pelo GitHub onde os passos serao executados.
     runs-on: ubuntu-latest
+    # Disponibiliza o secret para os passos do job.
+    env:
+      PAT_SC_TOKEN: ${{ secrets.PAT_SC_TOKEN }}
 
     # Sequencia de passos executados dentro do job.
     steps:
       # Baixa o codigo do repositorio para o runner.
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # Usa o PAT configurado em Secrets para autenticacao no checkout.
+          token: ${{ secrets.PAT_SC_TOKEN }}
 
       # Instala e configura a versao do Python usada no pipeline.
       - name: Set up Python
