@@ -6,18 +6,30 @@ on:
   # Executa este workflow quando um Pull Request e aberto, atualizado ou reaberto.
   pull_request:
 
+permissions:
+  # Permissao minima para checkout e leitura do codigo.
+  contents: read
+  # Permissao de leitura de metadados do PR.
+  pull-requests: read
+
 # Lista de jobs (tarefas) que o workflow executa.
 jobs:
   # Job principal de build/validacao da aplicacao.
   build:
     # Runner hospedado pelo GitHub onde os passos serao executados.
     runs-on: ubuntu-latest
+    # Disponibiliza o secret para os passos do job.
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     # Sequencia de passos executados dentro do job.
     steps:
       # Baixa o codigo do repositorio para o runner.
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # Usa o token nativo do GitHub Actions para autenticar o fetch do PR.
+          token: ${{ github.token }}
 
       # Instala e configura a versao do Python usada no pipeline.
       - name: Set up Python
