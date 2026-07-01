@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     # Disponibiliza o secret para os passos do job.
     env:
-      PAT_SC_TOKEN: ${{ secrets.PAT_SC_TOKEN }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     # Sequencia de passos executados dentro do job.
     steps:
@@ -23,7 +23,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           # Usa o PAT configurado em Secrets para autenticacao no checkout.
-          token: ${{ secrets.PAT_SC_TOKEN }}
+          token: ${{ secrets.SONAR_TOKEN }}
 
       # Instala e configura a versao do Python usada no pipeline.
       - name: Set up Python
