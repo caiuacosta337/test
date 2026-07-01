@@ -30,6 +30,8 @@ jobs:
         with:
           # Usa o token nativo do GitHub Actions para autenticar o fetch do PR.
           token: ${{ github.token }}
+          # Historico completo melhora a analise de PR/blame no SonarCloud.
+          fetch-depth: 0
 
       # Instala e configura a versao do Python usada no pipeline.
       - name: Set up Python
@@ -53,3 +55,12 @@ jobs:
           python -m compileall app.py
           # Importa a app Flask e imprime o mapa de rotas para validar carregamento.
           python -c "from app import app; print(app.url_map)"
+
+      # Executa a analise no SonarCloud (requer sonar-project.properties no repositorio).
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          # Token do SonarCloud configurado em Settings > Secrets and variables > Actions.
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          # Token do GitHub usado para decoracao de PR no SonarCloud.
+          GITHUB_TOKEN: ${{ github.token }}
