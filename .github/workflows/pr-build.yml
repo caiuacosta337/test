@@ -26,7 +26,8 @@ jobs:
     steps:
       # Baixa o codigo do repositorio para o runner.
       - name: Checkout repository
-        uses: actions/checkout@v4
+        # Pinado no commit SHA do release v4.
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           # Usa o token nativo do GitHub Actions para autenticar o fetch do PR.
           token: ${{ github.token }}
@@ -35,7 +36,8 @@ jobs:
 
       # Instala e configura a versao do Python usada no pipeline.
       - name: Set up Python
-        uses: actions/setup-python@v5
+        # Pinado no commit SHA do release v5.
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           # Versao do Python usada para build/validacao.
           python-version: "3.13"
@@ -58,7 +60,8 @@ jobs:
 
       # Executa a analise no SonarCloud (requer sonar-project.properties no repositorio).
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v5
+        # Pinado no commit SHA do release v5.
+        uses: SonarSource/sonarqube-scan-action@2f77a1ec69fb1d595b06f35ab27e97605bdef703
         env:
           # Token do SonarCloud configurado em Settings > Secrets and variables > Actions.
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
