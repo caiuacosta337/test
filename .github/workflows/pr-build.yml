@@ -18,22 +18,23 @@ jobs:
   build:
     # Runner hospedado pelo GitHub onde os passos serao executados.
     runs-on: ubuntu-latest
-    # Disponibiliza o secret para os passos do job.
-    env:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     # Sequencia de passos executados dentro do job.
     steps:
       # Baixa o codigo do repositorio para o runner.
       - name: Checkout repository
-        uses: actions/checkout@v4
+        # Pinado no commit SHA do release v4.
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           # Usa o token nativo do GitHub Actions para autenticar o fetch do PR.
           token: ${{ github.token }}
+          # Historico completo melhora a analise de PR/blame no SonarCloud.
+          fetch-depth: 0
 
       # Instala e configura a versao do Python usada no pipeline.
       - name: Set up Python
-        uses: actions/setup-python@v5
+        # Pinado no commit SHA do release v5.
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           # Versao do Python usada para build/validacao.
           python-version: "3.13"
@@ -41,14 +42,24 @@ jobs:
       # Instala as dependencias da aplicacao.
       - name: Install dependencies
         run: |
-          # Atualiza o pip para evitar problemas com instaladores antigos.
-          python -m pip install --upgrade pip
-          # Instala os pacotes definidos no requirements.txt.
-          pip install -r requirements.txt
+          # Instala apenas wheels com versoes fixas, sem resolver dependencias adicionais.
+          python -m pip install --only-binary :all: --no-deps \
+            "blinker==1.9.0" \
+            "click==8.4.2" \
+            "colorama==0.4.6" \
+            "Flask==3.0.3" \
+            "Flask-WTF==1.2.1" \
+            "itsdangerous==2.2.0" \
+            "Jinja2==3.1.6" \
+            "MarkupSafe==3.0.3" \
+            "Werkzeug==3.1.8" \
+            "WTForms==3.2.2"
 
       # Executa validacoes de build da aplicacao Python/Flask.
       - name: Build and validate app
         run: |
+          # Executa testes automatizados da aplicacao.
+          python -m unittest discover -s tests -p "test_*.py"
           # Compila o arquivo Python para validar sintaxe/bytecode.
           python -m compileall app.py
           # Importa a app Flask e imprime o mapa de rotas para validar carregamento.
