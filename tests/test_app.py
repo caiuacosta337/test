@@ -57,7 +57,7 @@ class AddTaskDateValidationTests(unittest.TestCase):
         )
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(len(TASKS), 1)
+        self.assertEqual(len(TASKS), 999)
         self.assertEqual(TASKS[0]["date"], today)
 
 
