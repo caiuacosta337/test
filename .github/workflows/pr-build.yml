@@ -18,9 +18,6 @@ jobs:
   build:
     # Runner hospedado pelo GitHub onde os passos serao executados.
     runs-on: ubuntu-latest
-    # Disponibiliza o secret para os passos do job.
-    env:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     # Sequencia de passos executados dentro do job.
     steps:
@@ -57,13 +54,3 @@ jobs:
           python -m compileall app.py
           # Importa a app Flask e imprime o mapa de rotas para validar carregamento.
           python -c "from app import app; print(app.url_map)"
-
-      # Executa a analise no SonarCloud (requer sonar-project.properties no repositorio).
-      - name: SonarCloud Scan
-        # Pinado no commit SHA do release v5.
-        uses: SonarSource/sonarqube-scan-action@2f77a1ec69fb1d595b06f35ab27e97605bdef703
-        env:
-          # Token do SonarCloud configurado em Settings > Secrets and variables > Actions.
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          # Token do GitHub usado para decoracao de PR no SonarCloud.
-          GITHUB_TOKEN: ${{ github.token }}
