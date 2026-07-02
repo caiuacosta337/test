@@ -50,6 +50,8 @@ jobs:
       # Executa validacoes de build da aplicacao Python/Flask.
       - name: Build and validate app
         run: |
+          # Executa testes automatizados da aplicacao.
+          python -m unittest discover -s tests -p "test_*.py"
           # Compila o arquivo Python para validar sintaxe/bytecode.
           python -m compileall app.py
           # Importa a app Flask e imprime o mapa de rotas para validar carregamento.

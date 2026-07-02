@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import date, datetime
 
 from flask import Flask, redirect, render_template, request, url_for
 from flask_wtf.csrf import CSRFProtect
@@ -27,6 +27,18 @@ PRIORITY_ORDER = {
 
 # Armazenamento em memoria para demonstracao (reiniciar a app limpa as tarefas).
 TASKS = []
+
+
+def is_valid_task_date(date_value):
+    if not date_value:
+        return True
+
+    try:
+        parsed_date = datetime.strptime(date_value, "%Y-%m-%d").date()
+    except ValueError:
+        return False
+
+    return parsed_date >= date.today()
 
 
 @app.get("/")
@@ -64,12 +76,9 @@ def add_task():
     if priority not in PRIORITY_LABELS:
         priority = "medium"
 
-    # Valida formato de data (YYYY-MM-DD); limpa campo se valor for invalido.
-    if date_value:
-        try:
-            datetime.strptime(date_value, "%Y-%m-%d")
-        except ValueError:
-            date_value = ""
+    # Bloqueia datas invalidas e datas anteriores a hoje.
+    if not is_valid_task_date(date_value):
+        return redirect(url_for("index"))
 
     # Persiste a tarefa na lista em memoria.
     TASKS.append(
