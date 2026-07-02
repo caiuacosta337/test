@@ -22,6 +22,10 @@ Aplicacao web simples de gerenciamento de tarefas com:
    ```powershell
    pip install -r requirements.txt
    ```
+   Para reproduzir exatamente as dependencias do pipeline, use:
+   ```powershell
+   pip install --only-binary=:all: --require-hashes -r requirements-lock.txt
+   ```
 3. Execute a aplicacao:
    ```powershell
    python app.py
