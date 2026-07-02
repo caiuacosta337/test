@@ -33,5 +33,56 @@ Aplicacao web simples de gerenciamento de tarefas com:
 4. Abra no navegador:
    - http://127.0.0.1:5000
 
+## Deploy em Kubernetes
+
+### Pré-requisitos
+- Kubernetes cluster rodando (KIND, Docker Desktop, AKS, etc)
+- Docker com imagem pushada para registry (ACR)
+- kubectl instalado
+
+### Passos
+
+1. Criar Secret do ACR:
+   ```powershell
+   kubectl create secret docker-registry acr-secret `
+     --docker-server=devopsproject.azurecr.io `
+     --docker-username=<username> `
+     --docker-password=<password>
+   ```
+
+2. Aplicar deployment:
+   ```powershell
+   kubectl apply -f deployment.yaml
+   ```
+
+3. Acessar a aplicação:
+   ```powershell
+   # Port-forward
+   kubectl port-forward svc/flask-service 5000:5000
+   
+   # Depois acesse: http://localhost:5000
+   ```
+
+4. (Opcional) Aplicar Ingress:
+   ```powershell
+   kubectl apply -f ingress.yaml
+   # Acesse via: http://flask-app.local
+   ```
+
+### Comandos úteis
+```powershell
+# Ver status
+kubectl get all
+
+# Ver logs
+kubectl logs deployment/flask-app
+
+# Descrever pod
+kubectl describe pod <pod-name>
+
+# Deletar deployment
+kubectl delete deployment flask-app
+```
+
 ## Observacao
 As tarefas ficam em memoria (reiniciar a app limpa a lista).

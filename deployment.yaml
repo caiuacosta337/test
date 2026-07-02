@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: flask-secret
+type: Opaque
+stringData:
+  SECRET_KEY: "sua-chave-secreta-aqui"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flask-app
+  template:
+    metadata:
+      labels:
+        app: flask-app
+    spec:
+      imagePullSecrets:
+        - name: acr-secret
+      containers:
+        - name: flask-app
+          image: devopsproject.azurecr.io/flask-task-board:1.0.0
+          ports:
+            - containerPort: 5000
+          env:
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flask-secret
+                  key: SECRET_KEY
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "300m"
+              memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-service
+spec:
+  type: NodePort
+  selector:
+    app: flask-app
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+      nodePort: 30500
